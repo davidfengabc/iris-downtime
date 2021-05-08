@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-slack_webhook = "https://hooks.slack.com/services/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"
+slack_webhook = ""
 slack_webhook_headers = {'Content-type': 'application/json'}
 threshold = 1
 
