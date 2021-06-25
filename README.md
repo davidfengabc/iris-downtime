@@ -17,5 +17,5 @@ crontab -e
 ```
 # add line to crontab file, run script every 30 min
 ```
-*/30 * * * * /home4/dfeng/iris-downtime/venv/bin/python3 bud-compare.py
+*/30 * * * * cd /home4/dfeng/iris-downtime && /home4/dfeng/iris-downtime/venv/bin/python3 /home4/dfeng/iris-downtime/bud-compare.py
 ```
