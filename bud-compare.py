@@ -2,6 +2,7 @@ import requests
 import re
 import html
 import datetime
+from datetime import timezone
 import json
 
 from pathlib import Path
@@ -9,7 +10,7 @@ from bs4 import BeautifulSoup
 
 slack_webhook = ""
 slack_webhook_headers = {'Content-type': 'application/json'}
-threshold = 1
+threshold = 2
 
 downtime = [
     "< 1 min",      # 0
@@ -269,7 +270,7 @@ if __name__ == "__main__":
     vn = "PACNW"
     output_file = Path('output.json')
 
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(timezone.utc)
 
     mda_stns = bud_mda(network=network)
     monitor_stns = bud_monitor(virtual_net=vn, network=network)
@@ -282,12 +283,12 @@ if __name__ == "__main__":
     # stations drop out of reporting if downtime >5 days.  Compare against the mda list (includes all stations)
     for stn in mda_stns:
         if stn not in monitor_stns:
-            report_new['stations'][stn] = {'downtime': 12, 'alert': True}
+            report_new['stations'][stn] = {'downtime': 12, 'alert': False}
 
     for stn in monitor_stns:
         if monitor_stns[stn] > threshold:
             # print(f'{stn} {downtime[monitor_stns[stn]]}')
-            report_new['stations'][stn] = {'downtime': monitor_stns[stn], 'alert': True}
+            report_new['stations'][stn] = {'downtime': monitor_stns[stn], 'alert': False}
 
     slack_payload = SlackAlertPayload()
 
@@ -311,27 +312,34 @@ if __name__ == "__main__":
                 # stations improving
                 if values['downtime'] < last_alert_json['stations'][stn]['downtime']:
                     print(f'{stn} improved {downtime[values["downtime"]]}, {downtime[last_alert_json["stations"][stn]["downtime"]]}')
-                    slack_payload.improving_stations.append((stn, downtime[values["downtime"]]))
+                    # only alert once if station is improving
+                    if last_alert_json['stations'][stn]['alert'] is True:
+                        slack_payload.improving_stations.append((stn, downtime[values["downtime"]]))
+                    report_new['stations'][stn]["alert"] = False
                 # stations regressing
                 elif values['downtime'] > last_alert_json['stations'][stn]['downtime']:
                     print(f'{stn} regressed {downtime[values["downtime"]]}, {downtime[last_alert_json["stations"][stn]["downtime"]]}')
                     slack_payload.regressing_stations.append((stn, downtime[values["downtime"]]))
+                    report_new['stations'][stn]["alert"] = True
                 # stations constant
                 else:
                     print(
                         f'{stn} no change {downtime[values["downtime"]]}')
                     slack_payload.constant_stations.append((stn, downtime[values["downtime"]]))
+                    report_new['stations'][stn]["alert"] = last_alert_json['stations'][stn]['alert']
             # first alert
             else:
                 print(f'{stn} new this epoch, {downtime[values["downtime"]]}')
                 slack_payload.first_alerts_stations.append((stn, downtime[values["downtime"]]))
+                report_new['stations'][stn]["alert"] = True
 
 
         # stations returning to no latency, don't store these, but alert one last time
         for stn, values in last_alert_json['stations'].items():
             if stn not in report_new['stations']:
                 print(f'{stn} returned to minimal latency')
-                slack_payload.improving_stations.append((stn, downtime[0]))
+                if values['alert'] is True:
+                  slack_payload.improving_stations.append((stn, downtime[0]))
 
     # build slack alert
     payload = slack_payload.get_payload()
