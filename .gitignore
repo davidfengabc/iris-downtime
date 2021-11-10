@@ -1,2 +1,5 @@
 # Project exclude paths
 /venv/
+notes.txt
+logger.log
+last_status.pickle
