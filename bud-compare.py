@@ -5,9 +5,11 @@ import budc.slackint as slackint
 import datetime
 import logging
 import os
+import json
 
-channel = os.environ["IRIS_DOWNTIME_CHANNEL"]
-token = os.environ["IRIS_DOWNTIME_TOKEN"]
+secrets = json.load(open('secrets.json'))
+channel = secrets["IRIS_DOWNTIME_CHANNEL"]
+token = secrets["IRIS_DOWNTIME_TOKEN"]
 
 logging.basicConfig(format='%(asctime)s %(message)s', filename='logger.log', level=logging.DEBUG)
 
