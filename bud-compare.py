@@ -28,7 +28,7 @@ logging.debug(stations)
 
 downtime_dict = bparser.get_downtime_dict(stations)
 
-bgen = generator.Generator(downtime_dict)
+bgen = generator.Generator(downtime_dict, bc.get_downtime_threshold, bc.get_elapsed_threshold)
 
 alert_status = bgen.decider()
 

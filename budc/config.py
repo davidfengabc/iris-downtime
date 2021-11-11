@@ -6,31 +6,6 @@ import re
 station_query = 'http://service.iris.edu/fdsnws/station/1/query?net=%s&starttime=%sT00:00:00&level=station&format=text&includecomments=true&nodata=404'
 
 
-config = {
-    'bud-report': 
-        {
-            'networks':
-                {
-                
-                'UO': 
-                    { 
-                        'include':'*', 
-                        #'exclude':'BUCK'
-                    },
-                
-            
-                'UW': 
-                    {
-                        'include':'*', 
-                        #'exclude':'B,D'
-                    }
-                
-                },
-            'options':{}
-        }
-    }
-
-
 class BudConfig():
     def __init__(self, configfile):
         self.configfile = configfile
@@ -39,7 +14,13 @@ class BudConfig():
         with open(configfile, 'r') as fp:
             self.config = json.load(fp)
 
+        # config options:
+        self.downtime_threshold = 3
+        self.elapsed_threshold = 30  # minutes
+
         self.parse_config()
+        
+        
 
 
     def parse_config(self):
@@ -62,7 +43,18 @@ class BudConfig():
                 if s not in sta_ex:
                     self.stations.append((network, s))
 
+        if "downtime_threshold" in self.config["bud-report"]["options"]:
+            self.downtime_threshold = int(self.config["bud-report"]["options"]["downtime_threshold"])
 
+        if "elapsed_threshold" in self.config["bud-report"]["options"]:
+            self.elapsed_threshold = int(self.config["bud-report"]["options"]["elapsed_threshold"])
+
+    def get_downtime_threshold(self):
+        return self.downtime_threshold
+
+    def get_elapsed_threshold(self):
+        return self.elapsed_threshold
+        
     def get_stations_from_iris(self, network):
         epoch_date = datetime.date.today() - datetime.timedelta(days=1)
         url = station_query %(network, epoch_date)
