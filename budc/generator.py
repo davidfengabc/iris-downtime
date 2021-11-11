@@ -76,12 +76,13 @@ class Generator():
             for station, previous_stn_dict in previous_stations.items():
                 previous_downtime = previous_stn_dict.get('current_downtime', -1)
                 current_downtime = self.downtime_dict.get(station, -1)
+                time_threshold = self.previous_alert.get_timestamp() + datetime.timedelta(minutes=self.elapsed_threshold)
                 if station in self.downtime_dict:
                     delta = 0
                     if previous_downtime < current_downtime:
                         # regression
                         delta = 2
-                        if ((self.previous_alert.get_timestamp() + datetime.timedelta(minutes=self.elapsed_threshold)) > now) and current_downtime > self.downtime_threshold:
+                        if (time_threshold > now) and (current_downtime > self.downtime_threshold):
                             alert_status = 2
                         else:
                             alert_status = (1 if alert_status < 2 else 2)

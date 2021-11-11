@@ -44,9 +44,10 @@ if alert_status == 1:
 
     # retain timestamp from original alert
     orig_ts = bgen.get_previous_timestamp()
-    slack.update_alert(ts)
-    bgen.save_alert(ts)
-    
+    status, ts = slack.update_alert(ts)
+    # don't save updates, otherwise new alerts will be missed
+    #bgen.save_alert(ts)
+    logging.debug(f'alert_status {alert_status}, status {status}, ts {ts}')
 elif alert_status == 2:
     #generate new alert
     logging.info('generate new alert')
