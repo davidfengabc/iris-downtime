@@ -96,6 +96,7 @@ class Generator():
                         # same
                         #delta = self.previous_alert.get_delta(station)
                         delta = 0
+                        alert_status = (1 if alert_status < 2 else 2)
                     if current_downtime >= 0 or previous_downtime >= 0:
                         self.alert.add_station(station, previous_downtime, current_downtime, delta)
                 else:
