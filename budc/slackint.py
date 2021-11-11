@@ -63,7 +63,7 @@ class SlackInterface():
 
     def update_alert(self, ts):
         self.connect_generator()
-        self.generate_msg(datetime.datetime.now())
+        self.generate_msg(self.alert.get_timestamp(), self.alert.get_previous_downtime)
         result = self.client.chat_update(
             channel=self.slack_channel_id,
             ts = ts,
@@ -73,7 +73,7 @@ class SlackInterface():
 
     def new_alert(self):
         self.connect_generator()
-        self.generate_msg(datetime.datetime.now())
+        self.generate_msg(self.alert.get_timestamp(),self.alert.get_timestamp())
         result = self.client.chat_postMessage(
             channel=self.slack_channel_id,
             blocks=self.blocks
@@ -81,14 +81,14 @@ class SlackInterface():
 
         return result['ok'], result['ts']
 
-    def generate_msg(self, timestamp:datetime):
+    def generate_msg(self, timestamp:datetime, update_time:datetime):
         slack_msg = {"blocks": []}
 
         time_blk = {
             "type": "section",
             "text": {
                 "type": "plain_text",
-                "text": f"{timestamp}"
+                "text": f"Original alert time:  {timestamp}\nUpdate time: {update_time}"
             }
         }
 

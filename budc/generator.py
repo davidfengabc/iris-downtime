@@ -37,9 +37,10 @@ class Generator():
         
 
     
-    def save_alert(self, alert_id, timestamp:datetime, ofile = 'last_status.pickle'):
+    def save_alert(self, alert_id, timestamp:datetime, update_time:datetime, ofile = 'last_status.pickle'):
         self.alert.set_alert_id(alert_id)
         self.alert.set_timestamp(timestamp)
+        self.alert.set_update_time(update_time)
         pickle.dump(self.alert, open(ofile, 'wb'))
 
     def retrieve_previous_alert(self, ifile = 'last_status.pickle'):
@@ -133,11 +134,17 @@ class Generator():
             self.retrieve_previous_alert()
         return self.previous_alert.get_alert_id()
 
+    def get_previous_timestamp(self):
+        if self.previous_alert is None:
+            self.retrieve_previous_alert()
+        return self.previous_alert.get_timestamp()
+
 
 class Alert():
     def __init__(self):
         self.station_dict = {}
         self.timestamp = None
+        self.update_time = None
         self.alert_id = None
 
     def set_timestamp(self, timestamp):
@@ -145,6 +152,12 @@ class Alert():
     
     def get_timestamp(self):
         return self.timestamp
+
+    def set_update_time(self, timestamp):
+        self.update_time = timestamp
+    
+    def get_update_time(self):
+        return self.update_time
 
     def set_alert_id(self, alert_id):
         self.alert_id = alert_id

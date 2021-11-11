@@ -41,15 +41,18 @@ if alert_status == 1:
     logging.info('update previous alert')
     slack = slackint.SlackInterface(bgen, legend, channel, token)
     ts = bgen.get_previous_alert_id()
+
+    # retain timestamp from original alert
+    orig_ts = bgen.get_previous_timestamp()
     slack.update_alert(ts)
-    bgen.save_alert(ts, now)
+    bgen.save_alert(ts, orig_ts, now)
     
 elif alert_status == 2:
     #generate new alert
     logging.info('generate new alert')
     slack = slackint.SlackInterface(bgen, legend, channel, token)
     status, ts = slack.new_alert()
-    bgen.save_alert(ts, now)
+    bgen.save_alert(ts, now, now)
     logging.debug(f'alert_status {alert_status}, status {status}, ts {ts}')
 else:
     #do nothing, don't even save it

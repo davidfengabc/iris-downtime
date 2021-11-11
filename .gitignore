@@ -3,3 +3,8 @@
 notes.txt
 logger.log
 last_status.pickle
+secrets.json
+budc/__pycache__/budc.cpython-38.pyc
+budc/__pycache__/config.cpython-38.pyc
+budc/__pycache__/generator.cpython-38.pyc
+budc/__pycache__/slackint.cpython-38.pyc
