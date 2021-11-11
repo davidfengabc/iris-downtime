@@ -10,7 +10,7 @@
             }
         },
         "options": {
-            "downtime_threshold": "3",
+            "downtime_threshold": "1",
             "elapsed_threshold": "30"
         }
     }
