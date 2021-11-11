@@ -37,10 +37,8 @@ class Generator():
         
 
     
-    def save_alert(self, alert_id, timestamp:datetime, update_time:datetime, ofile = 'last_status.pickle'):
+    def save_alert(self, alert_id, ofile = 'last_status.pickle'):
         self.alert.set_alert_id(alert_id)
-        self.alert.set_timestamp(timestamp)
-        self.alert.set_update_time(update_time)
         pickle.dump(self.alert, open(ofile, 'wb'))
 
     def retrieve_previous_alert(self, ifile = 'last_status.pickle'):
@@ -62,8 +60,6 @@ class Generator():
 
         if self.previous_alert == {}:
             for station, current_downtime in self.downtime_dict.items():
-
-                self.alert.set_timestamp(now)
 
                 if current_downtime >= self.downtime_threshold:
                     # generate alert
@@ -123,6 +119,13 @@ class Generator():
                     # new station, downtime is not 0, but under threshold, don't force new alert
                     self.alert.add_station(station, 0, current_downtime, 2)
                     alert_status = (1 if alert_status < 2 else 2)
+        
+        if alert_status == 2:
+            self.alert.set_timestamp(now)
+        else:
+            self.alert.set_timestamp(self.get_previous_timestamp())
+        
+        self.alert.set_update_time(now)
 
         return alert_status
 
