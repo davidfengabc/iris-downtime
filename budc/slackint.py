@@ -116,7 +116,7 @@ class SlackInterface():
         # improving stations dictionary
         if len(self.imp_stns) > 0:
             text = ''
-            for station, current_downtime, previous_downtime in self.reg_stns:
+            for station, current_downtime, previous_downtime in self.imp_stns:
                 if current_downtime != previous_downtime:
                     text += f'{station}\t~{self.legend.get(previous_downtime, "unk")}~ {self.legend.get(current_downtime, "unk")}\n'
                 else:
