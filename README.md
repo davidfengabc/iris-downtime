@@ -6,7 +6,17 @@ python3 -m venv venv
 source venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
-# set slack_webhook and threshold variables in script
+# edit config.json to include/exclude networks/stations
+# create secrets.json in same directory as bud-compare.py
+IRIS_DOWNTIME_CHANNEL is the name of the channel.  The app must be added to the channel as an integration.
+IRIS_DOWNTIME_TOKEN is an oauth token provided by Slack.
+
+```
+{
+    "IRIS_DOWNTIME_CHANNEL": "", 
+    "IRIS_DOWNTIME_TOKEN": ""
+}
+```
 # run once
 ```
 python3 bud-compare.py
