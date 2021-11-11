@@ -82,7 +82,7 @@ class Generator():
                     if previous_downtime < current_downtime:
                         # regression
                         delta = 2
-                        if (time_threshold > now) and (current_downtime > self.downtime_threshold):
+                        if (current_downtime > self.downtime_threshold):
                             alert_status = 2
                         else:
                             alert_status = (1 if alert_status < 2 else 2)
