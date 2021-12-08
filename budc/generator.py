@@ -95,11 +95,10 @@ class Generator():
                         #delta = self.previous_alert.get_delta(station)
                         delta = 0
                         alert_status = (1 if alert_status < 2 else 2)
-                    if current_downtime > 0 or previous_downtime > 0:
-                        self.alert.add_station(station, previous_downtime, current_downtime, delta)
+                    self.alert.add_station(station, previous_downtime, current_downtime, delta)
                 else:
                     # station doesn't exist in current dict - might happen if station was removed from configuration
-                    # don't add to new config
+                    # don't add to new alert
                     # self.alert.add_station(station, previous_downtime, -1, 0)
                     # alert_status = (1 if alert_status < 2 else 2)
                     pass
@@ -117,9 +116,8 @@ class Generator():
                     self.alert.add_station(station, 0, current_downtime, 2)
                     alert_status = 2
                 else:
-                    # new station, downtime is not 0, but under threshold, don't force new alert
-                    self.alert.add_station(station, 0, current_downtime, 2)
-                    alert_status = (1 if alert_status < 2 else 2)
+                    # new station, downtime is not 0, but under threshold, don't report
+                    pass
         
         if alert_status == 2:
             self.alert.set_timestamp(now)
