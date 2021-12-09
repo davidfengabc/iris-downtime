@@ -121,6 +121,10 @@ class Generator():
         
         if alert_status == 2:
             self.alert.set_timestamp(now)
+            # remove stations under threshold to prevent list from expanding
+            for station, values in self.alert.get_station_dict().items():
+                if values['current_downtime'] < self.downtime_threshold:
+                    self.alert.delete_station(station)
         else:
             self.alert.set_timestamp(self.get_previous_timestamp())
         
@@ -174,6 +178,8 @@ class Alert():
             'delta' : delta
         }
 
+    def delete_station(self, station:tuple):
+        del self.station_dict[station]
     
     def get_delta(self, station):
         return self.station_dict[station]['delta']
