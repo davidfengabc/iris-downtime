@@ -118,13 +118,15 @@ class Generator():
                 else:
                     # new station, downtime is not 0, but under threshold, don't report
                     pass
-        
+        del_stations = []
         if alert_status == 2:
             self.alert.set_timestamp(now)
             # remove stations under threshold to prevent list from expanding
             for station, values in self.alert.get_station_dict().items():
                 if values['current_downtime'] < self.downtime_threshold:
-                    self.alert.delete_station(station)
+                    del_stations.append(station)
+            for station in del_stations:
+                self.alert.delete_station(station)
         else:
             self.alert.set_timestamp(self.get_previous_timestamp())
         
