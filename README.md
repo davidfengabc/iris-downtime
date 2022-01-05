@@ -1,6 +1,6 @@
 # iris-downtime
 ```
-git clone https://github.com/davidfengabc/iris-downtime.git
+git clone https://github.com/pnsn/iris-downtime.git
 cd iris-downtime/
 python3 -m venv venv
 source venv/bin/activate
